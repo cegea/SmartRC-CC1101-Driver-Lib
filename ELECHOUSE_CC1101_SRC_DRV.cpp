@@ -67,6 +67,8 @@ byte clb1[2]= {24,28};
 byte clb2[2]= {31,38};
 byte clb3[2]= {65,76};
 byte clb4[2]= {77,79};
+SPISettings spisettings(1000000, MSBFIRST, SPI_MODE0);
+
 
 /****************************************************************/
 uint8_t PA_TABLE[8]     {0x00,0xC0,0x00,0x00,0x00,0x00,0x00,0x00};
@@ -95,7 +97,8 @@ void ELECHOUSE_CC1101::SpiStart(void)
   #ifdef ESP32
   SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
   #else
-  SPI.begin();
+  SPI.begin(true);
+  SPI.beginTransaction(spisettings);
   #endif
 }
 /****************************************************************
@@ -163,6 +166,7 @@ void ELECHOUSE_CC1101::Init(void)
   digitalWrite(SCK_PIN, HIGH);
   digitalWrite(MOSI_PIN, LOW);
   Reset();                    //CC1101 reset
+  SpiEnd();
   RegConfigSettings();            //CC1101 register config
   SpiEnd();
 }
